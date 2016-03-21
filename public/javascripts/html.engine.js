@@ -2317,10 +2317,13 @@
 
             // loop through properties
             for (var i in rootObj) {
-                if (rootObj[i] && rootObj[i].subscribe && !rootObj[i].add) {
-                    // if it is an observer but not an array
-                    // then get then object value then assign to result
-                    result[i] = html.getData(rootObj[i]);
+                if (isFunction(rootObj[i]) && !rootObj[i].add) {
+                    // if the current element is kind of observer
+                    // return the value of observer
+                    if (rootObj[i].subscribe)
+                        result[i] = rootObj[i]();
+                    else
+                        result[i] = rootObj[i];
                 } else {
                     result[i] = html.serialize(rootObj[i]);
                 }

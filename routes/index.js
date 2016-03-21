@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var store = require('./Store');
+var Store = require('./Store');
+var store = new Store();
 var html = require('../public/javascripts/html.engine');
 var fs = require('fs');
 
@@ -19,44 +20,31 @@ router.post('/index', function(req, res, next) {
 	    return console.log(err);
 	  }
 	  var clientStore = html.serialize(store);
-	  var variables = '';
-	  for (var i in clientStore) {
-        var observer = 'var ';
-	  	observer += i + ' = html.data(\'' + clientStore[i].data + '\');';
-	  	observer += i + '.events = ' + getEventList(clientStore[i]) + '\n';
-	  	variables += observer;
-	  }
-	  var storeStr = variables + ' var store = {';
-	  for (var i in clientStore) {
-	  	storeStr += i + ': ' + i + ',';
+	  var storeStr = ' var store = {\n';
+	  for (var prop in clientStore) {
+	  	storeStr += prop + getPropValue(clientStore, prop);
 	  }
 	  storeStr.length--; // remove the last semicolon in the string
 	  storeStr += '}\nfor (var prop in store) {'
-	  + '\n  app.serverWire(prop, store[prop]);'
-	  + '\n  app.registerEvents(prop, store[prop]);\n}'
+	  + '\n  app.serverWire(prop, store[prop]);\n}\n'
 	  res.json(storeStr + data + ' ;store;');
 	});
 });
 
-var notEvent = ['data'];
-function getEventList (prop) {
-	var res = [];
-	for (var eventName in prop) {
-		if (notEvent.indexOf(eventName) >= 0) continue;
-		res.push(eventName);
-	}
-	return JSON.stringify(res);
-};
+function getPropValue (store, prop) {
+	return html.isFunction(store[prop]) ? (': app.serverEvent(\'' + prop + '\'),\n')
+		: (': html.data(' + JSON.stringify(store[prop]) + '),\n');
+}
 
 router.post('/serverWire', function(req, res, next) {
 	var body = req.body;
-	store[body.prop].data(body.data);
+	store[body.prop](body.data);
 	return newState(req, res, next);
 });
 
 router.post('/serverEvent', function(req, res, next) {
 	var body = req.body;
-	var event = store[body.prop][body.eventName];
+	var event = store[body.eventName];
 	// execute the event
 	event();
 	return newState(req, res, next);
@@ -65,9 +53,9 @@ router.post('/serverEvent', function(req, res, next) {
 function newState(req, res, next) {
 	var result = {};
 	for (var prop in store) {
-		if (store[prop].data.computed || store[prop].data.isDirty())
-			result[prop] = store[prop].data();
-		store[prop].data.isDirty(false);
+		if (store[prop].computed || store[prop].isDirty && store[prop].isDirty())
+			result[prop] = store[prop]();
+		store[prop].isDirty && store[prop].isDirty(false);
 	}
   	res.json(result);
 }

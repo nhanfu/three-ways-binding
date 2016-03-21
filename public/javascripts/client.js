@@ -22,6 +22,7 @@ app.updateClientState = function (serverStore) {
 };
 
 app.serverWire = function (prop, observer) {
+	if (!observer || !observer.subscribe) return;
 	var serverWire = function (data) {
 		html.postJSON('/serverWire', {data: data, prop: prop})
 		.done(app.updateClientState);
@@ -30,11 +31,9 @@ app.serverWire = function (prop, observer) {
 	observer.subscribe(serverWire);
 };
 
-app.registerEvents = function (prop, observer) {
-	for (var i = 0, j = observer.events.length; i < j; i++) {
-		observer[observer.events[i]] = function (e) {
-			html.postJSON('/serverEvent', {eventName: this.eventName, prop: prop})
-			.done(app.updateClientState);
-		}.bind({eventName: observer.events[i]})
-	}
+app.serverEvent = function (eventName) {
+	return function (e) {
+		html.postJSON('/serverEvent', {eventName: eventName})
+		.done(app.updateClientState);
+	};
 };

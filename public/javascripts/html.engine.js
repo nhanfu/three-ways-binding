@@ -385,7 +385,7 @@
 
         // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp.
         // These method are from UnderscoreJs
-        var typeCheck = html.array(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp']);
+        var typeCheck = html.array(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Array']);
         typeCheck.each(function (type) {
             html['is' + type] = function (obj) {
                 return objPro.toString.call(obj) === '[object ' + type + ']';
@@ -1384,7 +1384,7 @@
                 index = realList.indexOf(realItem);
             if (valueField !== '') {
                 index = html.array.firstOrDefault.call(realList, function (i) {
-                    return i[valueField] === realItem[valueField];
+                    return html.getData(html.getData(i)[valueField]) === html.getData(realItem[valueField]);
                 });
                 index = html.array.indexOf.call(realList, index);
             }
@@ -1400,8 +1400,8 @@
             var select = element.nodeName.toLowerCase() === 'select' ? element : this.createElement('select');
             // render options for the select tag
             this.each(list, function (model) {
-                var value = isString(valueField) ? model[valueField] : model;
-                var display = isString(displayField) ? model[displayField] : model;
+                var value = isString(valueField) ? html.getData(html.getData(model)[valueField]) : model;
+                var display = isString(displayField) ? html.getData(html.getData(model)[displayField]) : model;
                 html.option(display, value).$;
             });
             // set selected index
@@ -1419,7 +1419,9 @@
                     current(selectedObj, true);
                 });
                 current.subscribe(function (val) {
-                    select.selectedIndex = getSelectedIndex(list, val, valueField);
+                    setTimeout(function () {
+                        select.selectedIndex = getSelectedIndex(list, val, valueField);
+                    });
                 });
             }
             // return html object to facilitate fluent API

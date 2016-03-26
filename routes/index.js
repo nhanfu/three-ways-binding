@@ -31,9 +31,9 @@ router.post('/index', function(req, res, next) {
 	});
 });
 
-function getPropValue (store, prop) {
-	return html.isFunction(store[prop]) ? (': app.serverEvent(\'' + prop + '\'),\n')
-		: (': html.data(' + JSON.stringify(store[prop]) + '),\n');
+function getPropValue (clientStore, prop) {
+	return html.isFunction(clientStore[prop]) ? (': app.serverEvent(\'' + prop + '\'),\n')
+		: (': html.data(' + JSON.stringify(clientStore[prop]) + '),\n');
 }
 
 router.post('/serverWire', function(req, res, next) {

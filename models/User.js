@@ -9,6 +9,9 @@ var UserModel = {
 	addBenhNhan: function (benhNhan, callback) {
 		users.push(benhNhan);
 		callback(null);
+	},
+	listBenhNhan: function (callback) {
+		callback(users);
 	}
 }
 

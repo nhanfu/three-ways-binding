@@ -105,6 +105,7 @@
     html.trim = trim;
     html.trimLeft = trimLeft;
     html.trimRight = trimRight;
+    html.isPropertiesEnumerable = isPropertiesEnumerable;
     html.config = { lazyInput: false, historyEnabled: true };
     html.version = '1.0.2';
 

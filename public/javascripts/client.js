@@ -4,7 +4,7 @@ html(function () {
 	});
 });
 
-//html.config.lazyInput = true;
+html.config.lazyInput = true;
 
 var app = {};
 

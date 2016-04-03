@@ -16,5 +16,8 @@
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0",
     "synchronize": "^0.9.15"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.6.5"
   }
 }

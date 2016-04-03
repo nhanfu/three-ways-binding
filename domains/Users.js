@@ -13,11 +13,3 @@ var userSchema = new Schema({
 });
 
 var User = mongoose.model('User', userSchema);
-
-// User.statics.findByMayte = function (mayte, done) {
-//   return this.findOne({ mayte: mayte }, function (err, person) {
-//     done(err, person);
-//   });
-// }
-
-module.exports = User;

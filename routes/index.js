@@ -39,21 +39,23 @@ function getPropValue (clientStore, prop) {
 router.post('/serverWire', function(req, res, next) {
 	var body = req.body;
 	store[body.prop](body.data);
-	return newState(req, res, next);
+	res.json(true);
 });
 
 router.post('/serverEvent', function(req, res, next) {
 	var body = req.body;
 	var event = store[body.eventName];
 	// execute the event
-	event();
-	return newState(req, res, next);
+	// a callback will be executed after all change has been done
+	event(function (store) {
+		newState(req, res, store);
+	});
 });
 
-function newState(req, res, next) {
+function newState(req, res, store) {
 	var result = {};
 	for (var prop in store) {
-		if (store[prop].computed || store[prop].isDirty && store[prop].isDirty())
+		if (store[prop].isDirty && store[prop].isDirty())
 			result[prop] = store[prop]();
 		store[prop].isDirty && store[prop].isDirty(false);
 	}

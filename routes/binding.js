@@ -1,12 +1,18 @@
 html(document.body)
-	.input(store.benhNhan.mayte).attr({placeholder: 'Mã y tế'}).change(store.txtmayte_changeHandler).$
-	.input(store.benhNhan.ho).attr({placeholder: 'Họ'}).$
-	.input(store.benhNhan.ten).attr({placeholder: 'Tên'}).$
-	.input(store.benhNhan.gioitinh).attr({placeholder: 'Giới tính'}).$
-	.input(store.benhNhan.ngaysinh).attr({placeholder: 'Ngày sinh'}).$
+	.input(store.user.code).attr({placeholder: 'Code'}).change(store.txtCode_changeHandler).$
+	.input(store.user.firstName).attr({placeholder: 'First Name'}).$
+	.input(store.user.lastName).attr({placeholder: 'Last Name'}).$
+	.input(store.user.gender).attr({placeholder: 'Gender'}).$
+	.input(store.user.dateOfBirth).attr({placeholder: 'Date of birth'}).$
 	.br
-	.input(store.benhNhan.diachi).attr({placeholder: 'Địa chỉ'}).$
-	.input(store.benhNhan.sodienthoai).attr({placeholder: 'Số điện thoại'}).$
-	.input(store.benhNhan.nghenghiep).attr({placeholder: 'Nghề nghiệp'}).$
+	.input(store.user.address).attr({placeholder: 'Address'}).$
+	.input(store.user.phone).attr({placeholder: 'Phone number'}).$
+	.input(store.user.occupation).attr({placeholder: 'Occupation'}).$
 	.br
-	.button.text('Thêm bệnh nhân').click(store.addBenhNhan);
+	.button.text('Add person').click(store.adduser).$;
+
+html.div.table.each(store.userList, function (user, rowIndex) {
+	html.tr.each(store.userHeaders, function (header, colIndex) {
+		html.td.text(user[header.field]);
+	});
+});

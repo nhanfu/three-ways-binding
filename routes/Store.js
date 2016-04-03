@@ -4,71 +4,80 @@ var util = require('../browserUtils/util');
 
 var Store = function () {
 	var self = this;
-	self.benhNhan = {
-		mayte: '',
-		ho: '',
-		ten: '',
-		gioitinh: '',
-		ngaysinh: '',
-		diachi: '',
-		sodienthoai: '',
-		nghenghiep: ''
+	self.user = {
+		code: '',
+		firstName: '',
+		lastName: '',
+		gender: '',
+		dateOfBirth: '',
+		address: '',
+		phone: '',
+		occupation: ''
 	};
 
-	self.txtmayte_changeHandler = function (callback) {
-		var mayte = self.benhNhan.mayte;
-		UserModel.findByMayte(mayte, function (err, benhNhan) {
-			if (!err && benhNhan) {
-				self.benhNhan.ho = benhNhan.ho;
-				self.benhNhan.ten = benhNhan.ten;
-				self.benhNhan.gioitinh = benhNhan.gioitinh;
-				self.benhNhan.ngaysinh = benhNhan.ngaysinh;
-				self.benhNhan.diachi = benhNhan.diachi;
-				self.benhNhan.sodienthoai = benhNhan.sodienthoai;
-				self.benhNhan.nghenghiep = benhNhan.nghenghiep;
+	self.txtCode_changeHandler = function (done) {
+		var code = self.user.code;
+		UserModel.findByCode(code, function (err, user) {
+			if (!err && user) {
+				self.user.firstName = user.firstName;
+				self.user.lastName = user.lastName;
+				self.user.gender = user.gender;
+				self.user.dateOfBirth = user.dateOfBirth;
+				self.user.address = user.address;
+				self.user.phone = user.phone;
+				self.user.occupation = user.occupation;
 			} else {
-				self.benhNhan.ho = '';
-				self.benhNhan.ten = '';
-				self.benhNhan.gioitinh = '';
-				self.benhNhan.ngaysinh = '';
-				self.benhNhan.diachi = '';
-				self.benhNhan.sodienthoai = '';
-				self.benhNhan.nghenghiep = '';
+				self.user.firstName = '';
+				self.user.lastName = '';
+				self.user.gender = '';
+				self.user.dateOfBirth = '';
+				self.user.address = '';
+				self.user.phone = '';
+				self.user.occupation = '';
 				util.notify = 'Patient not found, please input another patient ID!';
-				util.focus = 'mayte';
+				util.focus = 'code';
 			}
-			callback(self);
+			done();
 		});
 	};
 
-	self.listBenhNhan = [];
+	self.userHeaders = [
+		{caption: 'Code', field: 'code'},
+		{caption: 'First name', field: 'firstName'},
+		{caption: 'Last name', field: 'lastName'},
+		{caption: 'Date of birth', field: 'dateOfBirth'},
+		{caption: 'Address', field: 'address'},
+		{caption: 'phone', field: 'phone'},
+		{caption: 'Occupation', field: 'occupation'}
+	];
+	self.userList = [];
 
-	self.init = function (callback) {
-		UserModel.listBenhNhan(function (listBenhNhan) {
-			self.listBenhNhan = listBenhNhan;
-			callback(self);
+	self.init = function (done) {
+		UserModel.getList(function (userList) {
+			self.userList = userList;
+			done();
 		});
 	}
 
-	self.addBenhNhan = function (callback) {
-		var benhNhan = {
-			mayte: self.benhNhan.mayte, ho: self.benhNhan.ho, ten: self.benhNhan.ten, gioitinh: self.benhNhan.gioitinh,
-			diachi: self.benhNhan.diachi, ngaysinh: self.benhNhan.ngaysinh,
-			sodienthoai: self.benhNhan.sodienthoai, nghenghiep: self.benhNhan.nghenghiep
+	self.adduser = function (done) {
+		var user = {
+			code: self.user.code, firstName: self.user.firstName, lastName: self.user.lastName, gender: self.user.gender,
+			address: self.user.address, dateOfBirth: self.user.dateOfBirth,
+			phone: self.user.phone, occupation: self.user.occupation
 		};
 
-		UserModel.addBenhNhan(benhNhan, function (err) {
+		UserModel.addUser(user, function (err) {
 			if (!err) {
-				self.benhNhan.mayte = '';
-				self.benhNhan.ho = '';
-				self.benhNhan.ten = '';
-				self.benhNhan.gioitinh = '';
-				self.benhNhan.ngaysinh = '';
-				self.benhNhan.diachi = '';
-				self.benhNhan.sodienthoai = '';
-				self.benhNhan.nghenghiep = '';
+				self.user.code = '';
+				self.user.firstName = '';
+				self.user.lastName = '';
+				self.user.gender = '';
+				self.user.dateOfBirth = '';
+				self.user.address = '';
+				self.user.phone = '';
+				self.user.occupation = '';
 			}
-			callback(self);
+			done();
 		});
 	};
 };

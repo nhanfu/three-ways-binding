@@ -6,3 +6,12 @@ body {
 a {
   color: #00B7FF;
 }
+
+table {
+	border-collapse: collapse;
+	border: 1px solid #ccc;
+}
+
+table td {
+	border: 1px solid #ccc;
+}

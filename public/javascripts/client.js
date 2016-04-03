@@ -13,6 +13,10 @@ app.isPropertiesEnumerable = function (x) {
 
 app.updateClientState = function (data, rootNode) {
 	var node = rootNode || app.store, value, observer;
+	if (html.isArray(data)) {
+		node.subscribe && node(data);
+		return;
+	}
 	for (var prop in data) {
 		observer = node[prop];
 		value = data[prop];
@@ -22,7 +26,7 @@ app.updateClientState = function (data, rootNode) {
 			app.updateUI(observer, value);
 		} else if (app.isPropertiesEnumerable(value)) {
 			// register server event
-			app.updateClientState(value, html.getData(observer));
+			app.updateClientState(value, html.isArray(value) ? observer : html.getData(observer));
 		}
 	}
 };

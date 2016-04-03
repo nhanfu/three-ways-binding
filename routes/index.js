@@ -20,21 +20,27 @@ router.post('/index', function(req, res, next) {
 	  if (err) {
 	    return console.log(err);
 	  }
-	  var storeStr = JSON.stringify(store);
-	  storeStr = storeStr.replace(/\}$/, '');
-	  for (var prop in store) {
-	  	if (html.isFunction(store[prop])) {
-	  		storeStr += ', ' + prop + ': function () {}';
-	  	}
-	  }
-	  storeStr = ' var store = ' + storeStr + '\n};app.store = store;\n';
-	  var serverWire = '';
-	  binding.replace(/\((store(\.\w*)*)\)/g, function ($0, $1) {
-	  	serverWire += 'app.serverWire(' + $1 + ', \'' + $1 + '\');\n';
+	  store.init && store.init(function() {
+	  	render(req, res, store, binding);
 	  });
-	  res.json(storeStr + serverWire + binding + ' ;\nstore;');
 	});
 });
+
+function render (req, res, store, binding) {
+	var storeStr = JSON.stringify(store);
+	storeStr = storeStr.replace(/\}$/, '');
+	for (var prop in store) {
+	 	if (html.isFunction(store[prop])) {
+	  		storeStr += ', ' + prop + ': function () {}';
+	  	}
+	}
+	storeStr = ' var store = ' + storeStr + '\n};app.store = store;\n';
+	var serverWire = '';
+	binding.replace(/\((store(\.\w*)*)[\),]/g, function ($0, $1) {
+	  	serverWire += 'app.serverWire(' + $1 + ', \'' + $1 + '\');\n';
+	});
+	res.json(storeStr + serverWire + binding + ' ;\nstore;');
+}
 
 router.post('/serverEvent', function(req, res, next) {
 	var body = req.body,
@@ -45,7 +51,7 @@ router.post('/serverEvent', function(req, res, next) {
 	var event = eval('store.' + body.eventName);
 	// execute the event
 	// a callback will be executed after all change has been done
-	event(function (store) {
+	event(function () {
 		res.json(store);
 	});
 });

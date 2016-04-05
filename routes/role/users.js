@@ -1,5 +1,5 @@
 var express = require('express');
-var html = require('../public/javascripts/html.engine');
+var html = require('../../public/javascripts/html.engine');
 var router = express.Router();
 
 var cities = html.data([{name: 'HCM', value: 1}, {name: 'Tokyo hot', value: 2}]);

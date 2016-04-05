@@ -12,7 +12,7 @@ app.isPropertiesEnumerable = function (x) {
 };
 
 app.updateClientState = function (data, rootNode) {
-	var node = rootNode || app.store, value, observer;
+	var node = rootNode || html.getData(app.store), value, observer;
 	if (html.isArray(data)) {
 		node.subscribe && node(data);
 		return;
@@ -20,7 +20,7 @@ app.updateClientState = function (data, rootNode) {
 	for (var prop in data) {
 		observer = node[prop];
 		value = data[prop];
-		if (observer.subscribe && !app.isPropertiesEnumerable(value)) {
+		if (observer && observer.subscribe && !app.isPropertiesEnumerable(value)) {
 			// if the node is observer, and the new value is not an object
 			// update the node value and notify change to the UI
 			app.updateUI(observer, value);

@@ -2,9 +2,9 @@ var express = require('express');
 var router = express.Router();
 var Store = require('./Store');
 var store = new Store();
-var html = require('../public/javascripts/html.engine');
+var html = require('../../public/javascripts/html.engine');
 var fs = require('fs');
-var util = require('../browserUtils/util');
+var util = require('../../browserUtils/util');
 var cookie = require('cookie');
 
 /* GET home page. */
@@ -36,7 +36,7 @@ function render (req, res, store, binding) {
 	}
 	storeStr = ' var store = ' + storeStr + '\n};app.store = store;\n';
 	var serverWire = '';
-	binding.replace(/\((store(\.\w*)*)[\),]/g, function ($0, $1) {
+	binding.replace(/\((store(\.\w*)+)[\),]/g, function ($0, $1) {
 	  	serverWire += 'app.serverWire(' + $1 + ', \'' + $1 + '\');\n';
 	});
 	res.json(storeStr + serverWire + binding + ' ;\nstore;');
@@ -52,6 +52,23 @@ router.post('/serverEvent', function(req, res, next) {
 	// execute the event
 	// a callback will be executed after all change has been done
 	event(function () {
+		res.json(store);
+	});
+});
+
+router.post('/serverListEvent', function(req, res, next) {
+	var body      = req.body,
+		newState  = body.newState,
+		rowIndex  = body.rowIndex,
+		action    = body.action,
+		eventName = body.eventName;
+	// set the new State for the store
+	setState(store, newState);
+	// get the event of the store
+	var event = eval('store.' + eventName);
+	// execute the event
+	// a callback will be executed after all change has been done
+	event(rowIndex, action, function () {
 		res.json(store);
 	});
 });

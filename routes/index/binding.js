@@ -14,5 +14,16 @@ html(document.body)
 html.div.table.each(store.userList, function (user, rowIndex) {
 	html.tr.each(store.userHeaders, function (header, colIndex) {
 		html.td.text(user[header.field]);
+		if (header.className) html.className(header.className);
+		if (header.action) html.click(function () {
+			html.postJSON('/serverListEvent',
+					{
+						rowIndex  : rowIndex,
+						action    : header.action,
+						eventName : 'userListEvent',
+						newState  : html.serialize(store)
+					})
+				.done(app.updateClientState);
+		});
 	});
 });

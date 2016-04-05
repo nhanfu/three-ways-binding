@@ -1,6 +1,6 @@
-var html = require('../public/javascripts/html.engine');
-var UserModel = require('../models/User');
-var util = require('../browserUtils/util');
+var html = require('../../public/javascripts/html.engine');
+var UserModel = require('../../models/User');
+var util = require('../../browserUtils/util');
 
 var Store = function () {
 	var self = this;
@@ -48,10 +48,16 @@ var Store = function () {
 		{caption: 'Date of birth', field: 'dateOfBirth'},
 		{caption: 'Address', field: 'address'},
 		{caption: 'phone', field: 'phone'},
-		{caption: 'Occupation', field: 'occupation'}
+		{caption: 'Occupation', field: 'occupation'},
+		{caption: '', action: 'delete', field: '', className: 'fa fa-trash' },
 	];
 	self.userList = [];
-
+	self.userListEvent = function (rowIndex, action, done) {
+		if (action === 'delete') {
+			self.userList.splice(rowIndex, 1);
+		}
+		done();
+	}
 	self.init = function (done) {
 		UserModel.getList(function (userList) {
 			self.userList = userList;

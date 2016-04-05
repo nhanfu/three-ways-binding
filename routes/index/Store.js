@@ -15,6 +15,8 @@ var Store = function () {
 		occupation: ''
 	};
 
+	self.buttonText = 'Add person';
+
 	self.txtCode_changeHandler = function (done) {
 		var code = self.user.code;
 		UserModel.findByCode(code, function (err, user) {
@@ -51,40 +53,51 @@ var Store = function () {
 		{caption: 'Occupation', field: 'occupation'},
 		{caption: '', action: 'delete', field: '', className: 'fa fa-trash' },
 	];
+	self.userIndex = -1;
 	self.userList = [];
-	self.userListEvent = function (rowIndex, action, done) {
+	self.userListClick = function (rowIndex, action, done) {
 		if (action === 'delete') {
 			self.userList.splice(rowIndex, 1);
+		} else if (action === '') {
+			self.user = self.userList[rowIndex];
+			self.userIndex = rowIndex;
+			self.buttonText = 'Update'
 		}
 		done();
-	}
+	};
+
 	self.init = function (done) {
 		UserModel.getList(function (userList) {
 			self.userList = userList;
 			done();
 		});
-	}
+	};
 
-	self.adduser = function (done) {
+	self.addUpdateUser = function (done) {
 		var user = {
-			code: self.user.code, firstName: self.user.firstName, lastName: self.user.lastName, gender: self.user.gender,
-			address: self.user.address, dateOfBirth: self.user.dateOfBirth,
-			phone: self.user.phone, occupation: self.user.occupation
-		};
+				code: self.user.code, firstName: self.user.firstName, lastName: self.user.lastName, gender: self.user.gender,
+				address: self.user.address, dateOfBirth: self.user.dateOfBirth,
+				phone: self.user.phone, occupation: self.user.occupation
+			};
 
-		UserModel.addUser(user, function (err) {
-			if (!err) {
-				self.user.code = '';
-				self.user.firstName = '';
-				self.user.lastName = '';
-				self.user.gender = '';
-				self.user.dateOfBirth = '';
-				self.user.address = '';
-				self.user.phone = '';
-				self.user.occupation = '';
-			}
-			done();
-		});
+		if (self.userIndex === -1) { // add person
+			UserModel.addUser(user, function (err) {});
+		} else { // update person
+			self.userList[self.userIndex] = user;
+			self.buttonText = 'Add person';
+		}
+		self.user = {
+			code: '',
+			firstName: '',
+			lastName: '',
+			gender: '',
+			dateOfBirth: '',
+			address: '',
+			phone: '',
+			occupation: ''
+		};
+		self.userIndex = -1;
+		done();
 	};
 };
 

@@ -9,7 +9,8 @@ html(document.body)
 	.input(store.user.phone).attr({placeholder: 'Phone number'}).$
 	.input(store.user.occupation).attr({placeholder: 'Occupation'}).$
 	.br
-	.button.text('Add person').click(store.adduser).$;
+	.button.text(store.buttonText).click(store.addUpdateUser).$;
+
 
 html.div.table.each(store.userList, function (user, rowIndex) {
 	html.tr.each(store.userHeaders, function (header, colIndex) {
@@ -20,10 +21,22 @@ html.div.table.each(store.userList, function (user, rowIndex) {
 					{
 						rowIndex  : rowIndex,
 						action    : header.action,
-						eventName : 'userListEvent',
+						eventName : 'userListClick',
 						newState  : html.serialize(store)
 					})
 				.done(app.updateClientState);
 		});
 	});
+	html.click(function (e) {
+		var src = e.srcElement || e.target;
+		if (src.nodeName.toLowerCase() === 'button') return;
+		html.postJSON('/serverListEvent',
+			{
+				rowIndex  : rowIndex,
+				action    : '',
+				eventName : 'userListClick',
+				newState  : html.serialize(store)
+			})
+		.done(app.updateClientState);
+	})
 });

@@ -34,19 +34,15 @@ function render (req, res, store, binding) {
 	  		storeStr += ', ' + prop + ': function () {}';
 	  	}
 	}
-	storeStr = ' var store = ' + storeStr + '\n};app.store = store;\n';
-	var serverWire = '';
-	binding.replace(/\((store(\.\w*)+)[\),]/g, function ($0, $1) {
-	  	serverWire += 'app.serverWire(' + $1 + ', \'' + $1 + '\');\n';
-	});
-	res.json(storeStr + serverWire + binding + ' ;\nstore;');
+	storeStr = ' var store = ' + storeStr + '};\napp.store = store;\n';
+	res.json(storeStr + binding + ' ;\nstore;');
 }
 
 router.post('/serverEvent', function(req, res, next) {
 	var body = req.body,
 		newState = body.newState;
 	// set the new State for the store
-	setState(store, newState);
+	html.setState(store, newState);
 	// get the event of the store
 	var event = eval('store.' + body.eventName);
 	// execute the event
@@ -63,7 +59,7 @@ router.post('/serverListEvent', function(req, res, next) {
 		action    = body.action,
 		eventName = body.eventName;
 	// set the new State for the store
-	setState(store, newState);
+	html.setState(store, newState);
 	// get the event of the store
 	var event = eval('store.' + eventName);
 	// execute the event
@@ -73,14 +69,14 @@ router.post('/serverListEvent', function(req, res, next) {
 	});
 });
 
-function setState(node, newState) {
+html.setState = function (node, newState) {
 	var value;
 	for (var prop in newState) {
 		value = newState[prop];
 		if (!html.isFunction(value) && !html.isPropertiesEnumerable(value)) {
 			node[prop] = value;
 		} else if (html.isPropertiesEnumerable(value)) {
-			setState(node[prop], value);
+			html.setState(node[prop], value);
 		}
 	}
 }

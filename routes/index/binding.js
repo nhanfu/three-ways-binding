@@ -1,3 +1,18 @@
+app.serverWire(store.user.code, 'store.user.code');
+app.serverWire(store.txtCode_changeHandler, 'store.txtCode_changeHandler');
+app.serverWire(store.user.firstName, 'store.user.firstName');
+app.serverWire(store.user.lastName, 'store.user.lastName');
+app.serverWire(store.user.gender, 'store.user.gender');
+app.serverWire(store.user.dateOfBirth, 'store.user.dateOfBirth');
+app.serverWire(store.user.address, 'store.user.address');
+app.serverWire(store.user.phone, 'store.user.phone');
+app.serverWire(store.user.occupation, 'store.user.occupation');
+app.serverWire(store.buttonText, 'store.buttonText');
+app.serverWire(store.addUpdateUser, 'store.addUpdateUser');
+app.serverWire(store.userList, 'store.userList');
+app.serverWire(store.userHeaders, 'store.userHeaders');
+app.serverWire(store.userIndex, 'store.userIndex');
+
 html(document.body)
 	.input(store.user.code).attr({placeholder: 'Code'}).change(store.txtCode_changeHandler).$
 	.input(store.user.firstName).attr({placeholder: 'First Name'}).$
@@ -30,6 +45,8 @@ html.div.table.each(store.userList, function (user, rowIndex) {
 	html.click(function (e) {
 		var src = e.srcElement || e.target;
 		if (src.nodeName.toLowerCase() === 'button') return;
+		if (store.userIndex == rowIndex) return;
+		store.userIndex = rowIndex;
 		html.postJSON('/serverListEvent',
 			{
 				rowIndex  : rowIndex,

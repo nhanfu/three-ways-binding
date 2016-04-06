@@ -19,6 +19,7 @@ var Store = function () {
 
 	self.txtCode_changeHandler = function (done) {
 		var code = self.user.code;
+		self.userIndex = -1;
 		UserModel.findByCode(code, function (err, user) {
 			if (!err && user) {
 				self.user.firstName = user.firstName;
@@ -59,7 +60,7 @@ var Store = function () {
 		if (action === 'delete') {
 			self.userList.splice(rowIndex, 1);
 		} else if (action === '') {
-			self.user = self.userList[rowIndex];
+			html.setState(self.user, self.userList[rowIndex]);
 			self.userIndex = rowIndex;
 			self.buttonText = 'Update'
 		}

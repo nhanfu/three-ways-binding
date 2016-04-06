@@ -45,8 +45,8 @@ html.div.table.each(store.userList, function (user, rowIndex) {
 	html.click(function (e) {
 		var src = e.srcElement || e.target;
 		if (src.nodeName.toLowerCase() === 'button') return;
-		if (store.userIndex == rowIndex) return;
-		store.userIndex = rowIndex;
+		if (store.userIndex() == rowIndex) return;
+		store.userIndex(rowIndex);
 		html.postJSON('/serverListEvent',
 			{
 				rowIndex  : rowIndex,

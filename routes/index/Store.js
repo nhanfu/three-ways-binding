@@ -19,7 +19,6 @@ var Store = function () {
 
 	self.txtCode_changeHandler = function (done) {
 		var code = self.user.code;
-		self.userIndex = -1;
 		UserModel.findByCode(code, function (err, user) {
 			if (!err && user) {
 				self.user.firstName = user.firstName;
@@ -29,6 +28,11 @@ var Store = function () {
 				self.user.address = user.address;
 				self.user.phone = user.phone;
 				self.user.occupation = user.occupation;
+				var userInList = self.userList.find(function (user) {
+					return user.code === self.user.code;
+				});
+				self.userIndex = self.userList.indexOf(userInList);
+				self.buttonText = 'Update';
 			} else {
 				self.user.firstName = '';
 				self.user.lastName = '';
@@ -39,6 +43,8 @@ var Store = function () {
 				self.user.occupation = '';
 				util.notify = 'Patient not found, please input another patient ID!';
 				util.focus = 'code';
+				self.buttonText = 'Add person';
+				self.userIndex = -1;
 			}
 			done();
 		});

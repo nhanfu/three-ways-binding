@@ -10,6 +10,16 @@ var UserModel = {
 		users.push(user);
 		callback(null);
 	},
+	deleteUser: function (user, callback) {
+		var index = users.indexOf(users.find(function (i) { return i.code == user.code; }));
+		users.splice(index, 1);
+		callback(null);
+	},
+	updateUser: function (user, callback) {
+		var index = users.indexOf(users.find(function (i) { return i.code == user.code; }));
+		users[index] = user;
+		callback(null);
+	},
 	getList: function (callback) {
 		callback(users);
 	}

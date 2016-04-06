@@ -1,8 +1,8 @@
+var html = require('../../public/javascripts/html.engine');
 var express = require('express');
 var router = express.Router();
 var Store = require('./Store');
 var store = new Store();
-var html = require('../../public/javascripts/html.engine');
 var fs = require('fs');
 var util = require('../../browserUtils/util');
 var cookie = require('cookie');
@@ -27,6 +27,7 @@ router.post('/index', function(req, res, next) {
 });
 
 function render (req, res, store, binding) {
+	store = html.serialize(store);
 	var storeStr = JSON.stringify(store);
 	storeStr = storeStr.replace(/\}$/, '');
 	for (var prop in store) {
@@ -48,7 +49,8 @@ router.post('/serverEvent', function(req, res, next) {
 	// execute the event
 	// a callback will be executed after all change has been done
 	event(function () {
-		res.json(store);
+		// check dirty here to send to client what data changes
+		res.json(html.serialize(store));
 	});
 });
 
@@ -65,18 +67,28 @@ router.post('/serverListEvent', function(req, res, next) {
 	// execute the event
 	// a callback will be executed after all change has been done
 	event(rowIndex, action, function () {
-		res.json(store);
+		// check dirty here to send to client what data changes
+		res.json(html.serialize(store));
 	});
 });
 
 html.setState = function (node, newState) {
 	var value;
 	for (var prop in newState) {
-		value = newState[prop];
+		value = newState[prop], observer = node[prop];
 		if (!html.isFunction(value) && !html.isPropertiesEnumerable(value)) {
-			node[prop] = value;
+			if (observer != null && observer.subscribe)
+				// in case the node value is kind of observer
+				observer(value);
+			else
+				// in case the node value is not kind of observer
+				node[prop] = value;
 		} else if (html.isPropertiesEnumerable(value)) {
-			html.setState(node[prop], value);
+			// if the data is kind of object / Array
+			if (observer != null && observer.subscribe)
+				observer(value);
+			else
+				html.setState(node[prop], value);
 		}
 	}
 }

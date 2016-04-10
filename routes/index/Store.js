@@ -100,7 +100,7 @@ var Store = function () {
 	};
 
 	self.addUpdateUser = function (done) {
-		self.message = html.validate(self.user);
+		self.message = html.validate(self);
 		if (self.message) {
 			return done();
 		}

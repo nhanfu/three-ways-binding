@@ -61,4 +61,25 @@ app.focus = function (value, prop) {
 		html('[name="' + val +'"]').focus();
 		observer('');
 	});
-}
+};
+
+app.validate = function (value, prop) {
+	app.serverWire(value, prop);
+	var observer = eval('app.' + prop);
+	observer.subscribe(function (message) {
+		if (message === '') return;
+		toastr.warning(message);
+		observer('');
+	});
+};
+
+// app.validate = function (value, prop) {
+// 	app.serverWire(value, prop);
+// 	var observer = eval('app.' + prop);
+// 	observer.subscribe(function (obj) {
+// 		if (obj == null) return;
+// 		toastr.warning(obj.message);
+// 		html('[name="' + obj.control +'"]').;
+// 		observer({});
+// 	});
+// };

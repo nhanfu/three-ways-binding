@@ -99,19 +99,21 @@ html.validate = function (model) {
 		isPropertiesEnumerable;
 	for (var prop in Model) {
 		propVal = Model[prop];
-		// if the propperty value is not observer, do nothing
+		// if the propperty value is not observer nor complex object, do nothing
 		// otherwise, trigger validation
-		if (propVal == null || !propVal.validate) continue;
+		if (propVal == null || !propVal.validate && !html.isPropertiesEnumerable(propVal)) continue;
 		propVal = html.getData(Model[prop]);
 		isPropertiesEnumerable = html.isPropertiesEnumerable(propVal);
 		if (!isPropertiesEnumerable) {
-			if (!Model[prop].isValid()) {
+			// if the prop value is not kind of complex object
+			// run all validators
+			Model[prop].validate();
+			if (Model[prop].isValid() === false) {
 				var firstInvalidRule = Model[prop].validationResults.find(function (r) {
 					return r.isValid === false
 				});
 				return firstInvalidRule.message;
-			} else
-				return null;
+			}
 		} else {
 			return html.validate(Model[prop]);
 		}

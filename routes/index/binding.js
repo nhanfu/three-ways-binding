@@ -16,7 +16,7 @@ app.serverWire(store.userIndex, 'store.userIndex');
 app.serverWire(store.enable.button, 'store.enable.button');
 app.serverWire(store.enable.code, 'store.enable.code');
 app.focus(store.focus, 'store.focus');
-app.serverWire(store.message, 'store.message');
+app.validate(store.message, 'store.message');
 
 
 

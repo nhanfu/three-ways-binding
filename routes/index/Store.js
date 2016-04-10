@@ -20,15 +20,9 @@ var Store = function () {
 		code  : true
 	};
 	self.focus = html.data('');
-	self.message = '';
 
 	self.btnCancel_click = function (done) {
-		self.user.code('');
-		self.enable.code = true;
-		self.buttonText = 'Add person';
 		resetUser();
-		self.userIndex = -1;
-		self.focus('user.code');
 		done();
 	};
 
@@ -100,8 +94,8 @@ var Store = function () {
 	};
 
 	self.addUpdateUser = function (done) {
-		self.message = html.validate(self);
-		if (self.message) {
+		self.invalid = html.validate(self);
+		if (self.invalid) {
 			return done();
 		}
 		var user = {
@@ -113,23 +107,23 @@ var Store = function () {
 		if (self.userIndex === -1) { // add person
 			UserModel.addUser(user, function (err) {
 				self.userList.add(user);
-				self.user.code('');
 				resetUser();
-				self.userIndex = -1;
 				done();
 			});
 		} else { // update person
 			UserModel.updateUser(user, function (err, person) {
 				self.userList()[self.userIndex] = user;
-				self.buttonText = 'Add person';
-				self.user.code('');
 				resetUser();
-				self.userIndex = -1;
 				done();
 			});
 		}
 	};
 	function resetUser() {
+		self.user.code('');
+		self.enable.code = true;
+		self.buttonText = 'Add person';
+		self.focus('user.code');
+
 		self.user.firstName('');
 		self.user.lastName('');
 		self.user.gender('');
@@ -137,6 +131,7 @@ var Store = function () {
 		self.user.address('');
 		self.user.phone('');
 		self.user.occupation('');
+		self.userIndex = -1;
 	}
 };
 

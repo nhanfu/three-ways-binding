@@ -16,7 +16,7 @@ app.serverWire(store.userIndex, 'store.userIndex');
 app.serverWire(store.enable.button, 'store.enable.button');
 app.serverWire(store.enable.code, 'store.enable.code');
 app.focus(store.focus, 'store.focus');
-app.validate(store.message, 'store.message');
+app.validate(store.invalid, 'store.invalid');
 
 
 
@@ -31,9 +31,9 @@ html(document.body)
 	.input(store.user.address).attr({placeholder: 'Address', name: 'user.address'}).$
 	.input(store.user.phone).attr({placeholder: 'Phone number', name: 'user.phone'}).$
 	.input(store.user.occupation).attr({placeholder: 'Occupation', name: 'user.occupation'}).$
-	.br
+	.br.br
 	.button.text(store.buttonText).click(store.addUpdateUser).enable(store.enable.button).$
-	.button.attr('type', 'cancel').text('Cancel').click(store.btnCancel_click).enable(store.enable.button).$;
+	.button.attr('type', 'cancel').text('Cancel').click(store.btnCancel_click).enable(store.enable.button).$.br.br;
 
 
 html.div.table.each(store.userList, function (user, rowIndex) {

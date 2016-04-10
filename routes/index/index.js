@@ -93,15 +93,22 @@ html.setState = function (node, newState) {
 	}
 }
 
+var propStack = [];
 html.validate = function (model) {
 	var Model = html.getData(model),
 		propVal,
 		isPropertiesEnumerable;
 	for (var prop in Model) {
+		// add propperty to the stack
+		// we'll use the property to set focus on the invalid control
+		propStack.push(prop);
 		propVal = Model[prop];
 		// if the propperty value is not observer nor complex object, do nothing
 		// otherwise, trigger validation
-		if (propVal == null || !propVal.validate && !html.isPropertiesEnumerable(propVal)) continue;
+		if (propVal == null || !propVal.validate && !html.isPropertiesEnumerable(propVal)) {
+			propStack.pop();
+			continue;
+		}
 		propVal = html.getData(Model[prop]);
 		isPropertiesEnumerable = html.isPropertiesEnumerable(propVal);
 		if (!isPropertiesEnumerable) {
@@ -112,12 +119,15 @@ html.validate = function (model) {
 				var firstInvalidRule = Model[prop].validationResults.find(function (r) {
 					return r.isValid === false
 				});
-				return firstInvalidRule.message;
-			}
+				var res = {control: propStack.join('.'), message: firstInvalidRule.message};
+				propStack = [];
+				return res;
+			} else propStack.pop();
 		} else {
 			return html.validate(Model[prop]);
 		}
 	}
+	propStack = [];
 	// finally return null, the Model is valid
 	return null;
 }

@@ -93,4 +93,31 @@ html.setState = function (node, newState) {
 	}
 }
 
+html.validate = function (model) {
+	var Model = html.getData(model),
+		propVal,
+		isPropertiesEnumerable;
+	for (var prop in Model) {
+		propVal = Model[prop];
+		// if the propperty value is not observer, do nothing
+		// otherwise, trigger validation
+		if (propVal == null || !propVal.validate) continue;
+		propVal = html.getData(Model[prop]);
+		isPropertiesEnumerable = html.isPropertiesEnumerable(propVal);
+		if (!isPropertiesEnumerable) {
+			if (!Model[prop].isValid()) {
+				var firstInvalidRule = Model[prop].validationResults.find(function (r) {
+					return r.isValid === false
+				});
+				return firstInvalidRule.message;
+			} else
+				return null;
+		} else {
+			return html.validate(Model[prop]);
+		}
+	}
+	// finally return null, the Model is valid
+	return null;
+}
+
 module.exports = router;

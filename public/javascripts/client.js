@@ -52,3 +52,13 @@ app.serverEvent = function (eventName) {
 			.done(app.updateClientState);
 	};
 };
+
+app.focus = function (value, prop) {
+	app.serverWire(value, prop);
+	var observer = eval('app.' + prop);
+	observer.subscribe(function (val) {
+		if (val === '') return;
+		html('[name="' + val +'"]').focus();
+		observer('');
+	});
+}

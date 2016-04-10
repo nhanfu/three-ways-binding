@@ -1,14 +1,13 @@
 var html = require('../../public/javascripts/html.engine');
 var UserModel = require('../../models/User');
-var util = require('../../browserUtils/util');
 
 var Store = function () {
 	var self = this;
 	self.user = {
-		code: html.data(''),
-		firstName: html.data(''),
-		lastName: html.data(''),
-		gender: html.data(''),
+		code: html.data('').required('Code is required'),
+		firstName: html.data('').required('First name is required'),
+		lastName: html.data('').required('Last name is required'),
+		gender: html.data('').required('Gender is required'),
 		dateOfBirth: html.data(''),
 		address: html.data(''),
 		phone: html.data(''),
@@ -16,8 +15,24 @@ var Store = function () {
 	};
 
 	self.buttonText = 'Add person';
+	self.enable = {
+		button: true,
+		code  : true
+	};
+	self.focus = html.data('');
+	self.message = '';
 
-	self.txtCode_changeHandler = function (done) {
+	self.btnCancel_click = function (done) {
+		self.user.code('');
+		self.enable.code = true;
+		self.buttonText = 'Add person';
+		resetUser();
+		self.userIndex = -1;
+		self.focus('user.code');
+		done();
+	};
+
+	self.txtCode_change = function (done) {
 		var code = self.user.code();
 		UserModel.findByCode(code, function (err, user) {
 			if (!err && user) {
@@ -33,6 +48,7 @@ var Store = function () {
 				});
 				self.userIndex = self.userList().indexOf(userInList);
 				self.buttonText = 'Update';
+				self.enable.code = false;
 			} else {
 				self.user.firstName('');
 				self.user.lastName('');
@@ -41,10 +57,9 @@ var Store = function () {
 				self.user.address('');
 				self.user.phone('');
 				self.user.occupation('');
-				util.notify = 'Patient not found, please input another patient ID!';
-				util.focus = 'code';
 				self.buttonText = 'Add person';
 				self.userIndex = -1;
+				self.enable.code = true;
 			}
 			done();
 		});
@@ -72,6 +87,7 @@ var Store = function () {
 			html.setState(self.user, self.userList()[rowIndex]);
 			self.userIndex = rowIndex;
 			self.buttonText = 'Update';
+			self.enable.code = false;
 			done();
 		}
 	};
@@ -84,12 +100,16 @@ var Store = function () {
 	};
 
 	self.addUpdateUser = function (done) {
+		self.message = html.validate(self.user);
+		if (self.message) {
+			return done();
+		}
 		var user = {
 				code: self.user.code(), firstName: self.user.firstName(), lastName: self.user.lastName(), gender: self.user.gender(),
 				address: self.user.address(), dateOfBirth: self.user.dateOfBirth(),
 				phone: self.user.phone(), occupation: self.user.occupation()
 			};
-
+		self.foucs = 'user.code';
 		if (self.userIndex === -1) { // add person
 			UserModel.addUser(user, function (err) {
 				self.userList.add(user);

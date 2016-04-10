@@ -1,5 +1,6 @@
 app.serverWire(store.user.code, 'store.user.code');
-app.serverWire(store.txtCode_changeHandler, 'store.txtCode_changeHandler');
+app.serverWire(store.txtCode_change, 'store.txtCode_change');
+app.serverWire(store.btnCancel_click, 'store.btnCancel_click');
 app.serverWire(store.user.firstName, 'store.user.firstName');
 app.serverWire(store.user.lastName, 'store.user.lastName');
 app.serverWire(store.user.gender, 'store.user.gender');
@@ -12,19 +13,27 @@ app.serverWire(store.addUpdateUser, 'store.addUpdateUser');
 app.serverWire(store.userList, 'store.userList');
 app.serverWire(store.userHeaders, 'store.userHeaders');
 app.serverWire(store.userIndex, 'store.userIndex');
+app.serverWire(store.enable.button, 'store.enable.button');
+app.serverWire(store.enable.code, 'store.enable.code');
+app.focus(store.focus, 'store.focus');
+app.serverWire(store.message, 'store.message');
+
+
 
 html(document.body)
-	.input(store.user.code).attr({placeholder: 'Code'}).change(store.txtCode_changeHandler).$
-	.input(store.user.firstName).attr({placeholder: 'First Name'}).$
-	.input(store.user.lastName).attr({placeholder: 'Last Name'}).$
-	.input(store.user.gender).attr({placeholder: 'Gender'}).$
-	.input(store.user.dateOfBirth).attr({placeholder: 'Date of birth'}).$
+	.input(store.user.code).change(store.txtCode_change).enable(store.enable.code)
+		.attr({placeholder: 'Code', name: 'user.code'}).$
+	.input(store.user.firstName).attr({placeholder: 'First Name', name: 'user.firstName'}).$
+	.input(store.user.lastName).attr({placeholder: 'Last Name', name: 'user.lastName'}).$
+	.input(store.user.gender).attr({placeholder: 'Gender', name: 'user.gender'}).$
+	.input(store.user.dateOfBirth).attr({placeholder: 'Date of birth', name: 'user.dateOfBirth'}).$
 	.br
-	.input(store.user.address).attr({placeholder: 'Address'}).$
-	.input(store.user.phone).attr({placeholder: 'Phone number'}).$
-	.input(store.user.occupation).attr({placeholder: 'Occupation'}).$
+	.input(store.user.address).attr({placeholder: 'Address', name: 'user.address'}).$
+	.input(store.user.phone).attr({placeholder: 'Phone number', name: 'user.phone'}).$
+	.input(store.user.occupation).attr({placeholder: 'Occupation', name: 'user.occupation'}).$
 	.br
-	.button.text(store.buttonText).click(store.addUpdateUser).$;
+	.button.text(store.buttonText).click(store.addUpdateUser).enable(store.enable.button).$
+	.button.attr('type', 'cancel').text('Cancel').click(store.btnCancel_click).enable(store.enable.button).$;
 
 
 html.div.table.each(store.userList, function (user, rowIndex) {

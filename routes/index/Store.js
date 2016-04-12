@@ -7,12 +7,14 @@ var Store = function () {
 		code: html.data('').required('Code is required'),
 		firstName: html.data('').required('First name is required'),
 		lastName: html.data('').required('Last name is required'),
-		gender: html.data('').required('Gender is required'),
+		gender: html.data(1).required('Gender is required'),
 		dateOfBirth: html.data(''),
 		address: html.data(''),
 		phone: html.data(''),
 		occupation: html.data('')
 	};
+
+	self.genders = [{val: 1, text: 'Male'}, {val: 2, text: 'Female'}];
 
 	self.buttonText = 'Add person';
 	self.enable = {
@@ -126,7 +128,7 @@ var Store = function () {
 
 		self.user.firstName('');
 		self.user.lastName('');
-		self.user.gender('');
+		self.user.gender(1);
 		self.user.dateOfBirth('');
 		self.user.address('');
 		self.user.phone('');

@@ -25,7 +25,7 @@ html(document.body)
 		.attr({placeholder: 'Code', name: 'user.code'}).$
 	.input(store.user.firstName).attr({placeholder: 'First Name', name: 'user.firstName'}).$
 	.input(store.user.lastName).attr({placeholder: 'Last Name', name: 'user.lastName'}).$
-	.input(store.user.gender).attr({placeholder: 'Gender', name: 'user.gender'}).$
+	.dropdown(store.genders, store.user.gender, 'text', 'val').attr({placeholder: 'Gender', name: 'user.gender'}).$
 	.input(store.user.dateOfBirth).attr({placeholder: 'Date of birth', name: 'user.dateOfBirth'}).$
 	.br
 	.input(store.user.address).attr({placeholder: 'Address', name: 'user.address'}).$

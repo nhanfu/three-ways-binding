@@ -1385,7 +1385,7 @@
                 index = realList.indexOf(realItem);
             if (valueField !== '') {
                 index = html.array.firstOrDefault.call(realList, function (i) {
-                    return html.getData(html.getData(i)[valueField]) === html.getData(realItem[valueField]);
+                    return html.getData(html.getData(i)[valueField]) === html.getData(realItem[valueField] || realItem);
                 });
                 index = html.array.indexOf.call(realList, index);
             }
@@ -1407,7 +1407,7 @@
             });
             // set selected index
             select.selectedIndex = getSelectedIndex(list, current, valueField);
-            list.subscribe(function (realList) {
+            list.subscribe && list.subscribe(function (realList) {
                 select.selectedIndex = getSelectedIndex(realList, current, valueField);
             });
             if (isFunction(current)) {
